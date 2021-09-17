@@ -150,7 +150,7 @@ public class Transaction {
     /**
      * Help method to validate business data before entity creation
      */
-    private void validateBeforeCreation(long sourceAccountnr, long fromAccountnr, BigDecimal transferAmount) throws EntityCreationException {
+    private void validateBeforeCreation(long fromaccountnr, long toaccountnr, BigDecimal transferamount) throws EntityCreationException {
         try {
             if (fromaccountnr == toaccountnr) {
                 throw new EntityCreationException("account number from and Destination account cannot be the same");
@@ -169,7 +169,7 @@ public class Transaction {
     private void Duplicatetransactionauthenticator(Long TransactionReference, String TransactionDateTime) {
         try {
         } catch (DataIntegrityViolationException e) {
-            if (TransactionReference.timestamp == (other.TransactionReference.timestamp)) {
+            if (TransactionReference.TransactionDateTime == other.TransactionReference.TransactionDateTime) {
             }
             throw DuplicateTransactionException(e);
             {
