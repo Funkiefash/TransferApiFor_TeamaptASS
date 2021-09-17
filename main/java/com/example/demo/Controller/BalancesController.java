@@ -30,7 +30,7 @@ public class BalancesController {
     @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
             @ApiResponse(code = 404, message = "Account not found with ID")})
     public Account getBalance(
-            @ApiParam(value = "Account number related to the account", required = true) @PathVariable Long accountNr) {
-        return BalanceService.retrieveBalances(accountNr);
+            @ApiParam(value = "Account number related to the account", required = true) @PathVariable long accountNr) {
+        return BalanceService.retrieveBalances(accountnr);
     }
 }
