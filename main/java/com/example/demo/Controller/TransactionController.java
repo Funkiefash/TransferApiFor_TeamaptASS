@@ -44,14 +44,14 @@ public class TransactionController {
     }
 
     @RequestMapping(value = "v1/balances/new", method = RequestMethod.PUT)
-    public Balances newAccount(@RequestParam String name, @RequestParam String initialBalance) {
+    public Balances newBalances(@RequestParam String name, @RequestParam String initialBalance) {
         BigDecimal value = new BigDecimal(initialBalance);
 
         return this.transactionService.createNewAccount(name, value);
     }
 
     @RequestMapping(value = "/Balances/transaction", method = RequestMethod.PUT)
-    public Balances newAccount(@RequestParam Long FromAccountNr, @RequestParam Long toAccountNr, @RequestParam String amount) {
+    public Balances newBalances(@RequestParam Long Fromaccountnr, @RequestParam Long toaccountNr, @RequestParam String amount) {
         BigDecimal value = new BigDecimal(amount);
 
         return this.TransactionService.transfer(Fromaccountnr,  toaccountnr,  value);
@@ -66,9 +66,9 @@ public class TransactionController {
             try {
                 BalanceService.transferBalances(request);
 
-                TransferResult result = new TransferResult();
+                Transaction result = new Transaction();
                 result.setFromaccountnr(request.getFromaccountnr());
-                result.setBalanceAfterTransfer(balanceService.checkBalance(request.getFromaccountnr()));
+                result.setbalanceAfterTransfer(BalanceService.checkbalance(request.getFromaccountnr()));
 
                 return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
             } catch (AccountNotExistException | OverDraftException e) {
