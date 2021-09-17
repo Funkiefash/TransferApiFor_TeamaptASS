@@ -39,7 +39,7 @@ public class BalanceService {
     private String retrieveAccountBalanceUrl;
 
     public Balances retrieveBalances(Long accountnr) {
-        Account account = ibalanceRepository.findByaccountnr(accountnr)
+        Balances Balances = ibalanceRepository.findByaccountnr(accountnr)
                 .orElseThrow(() -> new AccountNotExistException("Account with id:" + accountnr + " does not exist.", ErrorCode.BALANCE_ERROR, HttpStatus.NOT_FOUND));
 
         return account;
@@ -47,24 +47,24 @@ public class BalanceService {
 
     @Transactional
     public void transferBalances(Transaction transaction) throws OverDraftException, AccountNotExistException, SystemException {
-        Account accountFrom = ibalanceRepository.getAccountForUpdate(transaction.getFromaccountnr())
+       Balances BalancesFrom = IBalanceRepository.getBalancesForUpdate(Transaction.getFromaccountnr())
                 .orElseThrow(() -> new AccountNotExistException("Account number:" + transaction.getFromaccountnr() + " does not exist.",
                         ErrorCode.BALANCE_ERROR));
 
-        Account accountTo = ibalanceRepository.getAccountForUpdate(transaction.getToaccountnr())
+        Balances BalancesTo = IBalanceRepository.getAccountForUpdate(transaction.getToaccountnr())
                 .orElseThrow(() -> new AccountNotExistException("Account number:" + transaction.getFromaccountnr() + " does not exist.", ErrorCode.BALANCE_ERROR));
-        if(accountFrom.getBalance().compareTo(transaction.getAmount()) < 0) {
+        if(BalancesFrom.getbalance().compareTo(Transaction.getamount()) < 0) {
             throw new OverDraftException("Account number:" + accountFrom.getaccountnr() + " does not have enough balance to transfer.", ErrorCode.BALANCE_ERROR);
         }
 
-        accountFrom.setBalance(accountFrom.getBalance().subtract(transaction.getamount()));
-        accountTo.setBalance(accountTo.getBalance().add(transaction.getamount()));
+        BalancesFrom.setBalance(accountFrom.getbalance().subtract(Transaction.getamount()));
+        accountTo.setbalance(accountTo.getbalance().add(Transaction.getamount()));
     }
 
     public BigDecimal checkBalance(long accountnr) throws SystemException {
 
         try {
-            String url = retrieveAccountBalanceUrl.replace("{id}", accountnr.toString());
+            String url = retrieveBalancesBalanceUrl.replace("{id}", accountnr.toString());
 
             log.info("checking balance from "+url);
 
