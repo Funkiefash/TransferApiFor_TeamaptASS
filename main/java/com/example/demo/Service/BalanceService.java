@@ -39,10 +39,10 @@ public class BalanceService {
     private String retrieveAccountBalanceUrl;
 
     public Balances retrieveBalances(Long accountnr) {
-        Balances Balances = ibalanceRepository.findByaccountnr(accountnr)
+        Balances balances = ibalanceRepository.findByaccountnr(accountnr)
                 .orElseThrow(() -> new AccountNotExistException("Account with id:" + accountnr + " does not exist.", ErrorCode.BALANCE_ERROR, HttpStatus.NOT_FOUND));
 
-        return account;
+        return balances;
     }
 
     @Transactional
