@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Entity.Balances;
-import com.example.demo.service.BalancesService;
+import com.example.demo.Service.BalanceService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiResponse;
 public class BalancesController {
 
     @Autowired
-    private BalanceService balancesService;
+    private BalanceService balanceService;
 
     @GetMapping("/{accountNr}/balance")
     @ApiOperation(value = "Get account balance by account number", response = Balances.class, produces = "application/json")
@@ -31,6 +31,6 @@ public class BalancesController {
             @ApiResponse(code = 404, message = "Account not found with ID")})
     public Account getBalance(
             @ApiParam(value = "Account number related to the account", required = true) @PathVariable Long accountNr) {
-        return BalancesService.retrieveBalances(accountNr);
+        return BalanceService.retrieveBalances(accountNr);
     }
 }
