@@ -1,0 +1,88 @@
+package com.example.demo.Service;
+
+import java.math.BigDecimal;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.demo.Entity.Balances;
+import com.example.demo.Entity.Transaction;
+import com.example.demo.exceptions.EntityCreationException;
+import com.example.demo.repositories.IBalanceRepository;
+import com.example.demo.repositories.TransactionRepository;
+import com.example.demo.service.exceptions.TransactionServiceException;
+
+@Service
+public class TransactionService {
+
+    private IBalanceRepository BalanceRepository;
+    private TransactionRepository transactionRepository;
+
+    public TransactionService() {
+        super();
+    }
+
+    @Autowired
+    public void setIBalanceRepository(IBalanceRepository IBalanceRepository) {
+        this.IBalanceRepository = balanceRepository;
+    }
+
+    @Autowired
+    public void setTransactionRepository(TransactionRepository transactionRepository) {
+        this.TransactionRepository = transactionRepository;
+    }
+
+    @Transactional
+    public synchronized Balances createNewAccount(String name, BigDecimal initialBalance) throws TransactionServiceException {
+        try {
+            Balances balances = new Balances(name, initialBalance);
+            return this.IBalanceRepository.save(balances);
+        } catch (DataAccessException e) {
+            throw new TransactionServiceException("DataAccess exception: " + e.getMessage(), e);
+        } catch (EntityCreationException e) {
+            throw new TransactionServiceException("Not valid entity data: " + e.getMessage(), e);
+        }
+    }
+
+    @Transactional
+    public synchronized Transaction transaction(Long fromaccountnr, Long toaccountnr, BigDecimal transferAmount)
+            throws TransactionServiceException {
+        try {
+            // transfer amount must be greater than zero
+            if (transferAmount.compareTo(BigDecimal.ZERO) < 0) {
+                throw new TransactionServiceException("Transaction amount must not be less than zero");
+            }
+
+            // find from account
+            Balances fromBalances = Optional.of(this.IBalanceRepository.findOne(toaccountnr)).get();
+
+            // find to account
+            Balances toBalances = Optional.of(this.IBalanceRepository.findOne(fromaccountnr)).get();
+
+            if (!fromAccount.subtract(transferAmount)) {
+                throw new TransactionServiceException("Source account has insufficent balance for transfer.");
+            }// if
+
+            toAccount.add(transferAmount);
+
+            this.IBalanceRepository.save(fromBalances);
+            this.IBalanceRepository.save(toBalances);
+
+            Transaction transaction = new Transaction(fromBalance.getId(), toaccountnr.getId(), transferAmount);
+            return this.TransactionRepository.save(Transaction);
+        } catch (EntityCreationException | NullPointerException e) {
+            throw new TransactionServiceException(e);
+        }
+    }
+
+    public Iterable<Balances> findAllBalances() {
+        return this.IBalanceRepository.findAll();
+    }
+
+    public Iterable<Transaction> findAllTransactions() {
+        return this.transactionRepository.findAll();
+    }
+}
