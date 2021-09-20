@@ -30,17 +30,17 @@ public class BalanceService {
     private static final Logger log = LoggerFactory.getLogger(BalanceService.class);
 
     @Autowired
-    private IBalanceRepository balanceRepository;
+    private IBalanceRepository ibalanceRepository;
 
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${endpoint.accountBalance}")
+    @Value("${endpoint.BalancesBalance}")
     private String retrieveAccountBalanceUrl;
 
     public Balances retrieveBalances(String accountnr) {
-        Balances Balances = IBalanceRepository.findByaccountnr(accountnr)
-                .orElseThrow(() -> new AccountNotExistException("Account with id:" + accountnr + " does not exist.", ErrorCode.ACCOUNT_ERROR, HttpStatus.NOT_FOUND));
+        Balances Balances = ibalanceRepository.findByaccountnr(accountnr)
+                .orElseThrow(() -> new AccountNotExistException("Account with id:" + accountnr + " does not exist.", ErrorCode.Balances_ERROR, HttpStatus.NOT_FOUND));
 
         return Balances;
     }
@@ -48,23 +48,23 @@ public class BalanceService {
     @Transactional
     public void transferBalances(TransactionRequest transfer) throws OverDraftException, AccountNotExistException, SystemException {
         Balances BalancesFrom = IBalanceRepository.getBalancesForUpdate(transfer.getfromaccountnr())
-                .orElseThrow(() -> new AccountNotExistException("Account with id:" + transaction.getfromaccountnr() + " does not exist.", ErrorCode.ACCOUNT_ERROR));
+                .orElseThrow(() -> new AccountNotExistException("Account with id:" + transfer.getfromaccountnr() + " does not exist.", ErrorCode.Balances_ERROR));
 
         Balances BalancesTo = IBalanceRepository.getBalancesForUpdate(transfer.gettoaccountnr())
-                .orElseThrow(() -> new AccountNotExistException("Account with id:" + transfer.getfromaccountnr() + " does not exist.", ErrorCode.ACCOUNT_ERROR));
+                .orElseThrow(() -> new AccountNotExistException("Account with id:" + transfer.getfromaccountnr() + " does not exist.", ErrorCode.Balances_ERROR));
 
-        if(BalancesFrom.getBalance().compareTo(transfer.getAmount()) < 0) {
-            throw new OverDraftException("Account with id:" + BalancesFrom.getAccountnr() + " does not have enough balance to transfer.", ErrorCode.ACCOUNT_ERROR);
+        if(BalancesFrom.getbalance().compareTo(transfer.getAmount()) < 0) {
+            throw new OverDraftException("Account with id:" + BalancesFrom.getaccountnr() + " does not have enough balance to transfer.", ErrorCode.Balances_ERROR);
         }
 
-        BalancesFrom.setBalance(BalancesFrom.getBalance().subtract(transfer.getAmount()));
-        BalancesTo.setBalance(BalancesTo.getBalance().add(transfer.getAmount()));
+        BalancesFrom.setbalance(BalancesFrom.getbalance().subtract(transfer.getAmount()));
+        BalancesTo.setbalance(BalancesTo.getbalance().add(transfer.getAmount()));
     }
 
     public BigDecimal checkBalance(String accountnr) throws SystemException {
 
         try {
-            String url = retrieveAccountBalanceUrl.replace("{id}", accountnr.toString());
+            String url = retrieveBalancesbalanceUrl.replace("{id}", accountnr.toString());
 
             log.info("checking balance from "+url);
 
@@ -79,7 +79,7 @@ public class BalanceService {
             final String errorMessage = "Encounter timeout error, please check with system administrator.";
 
             if(ex.getCause() instanceof SocketTimeoutException) {
-                throw new CheckBalanceException(errorMessage, ErrorCode.TIMEOUT_ERROR);
+                throw new CheckbalanceException(errorMessage, ErrorCode.TIMEOUT_ERROR);
             }
         }
         // for any other fail cases
