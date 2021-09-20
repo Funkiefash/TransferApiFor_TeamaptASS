@@ -30,7 +30,7 @@ public class BalanceService {
     private static final Logger log = LoggerFactory.getLogger(BalanceService.class);
 
     @Autowired
-    private IBalanceRepository ibalanceRepository;
+    private BalancesRepository  balancesRepository;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -39,7 +39,7 @@ public class BalanceService {
     private String retrieveAccountBalanceUrl;
 
     public Balances retrieveBalances(String accountnr) {
-        Balances Balances = balancseRepository.findByaccountnr(accountnr)
+        Balances Balances = balancesRepository.findByaccountnr(accountnr)
                 .orElseThrow(() -> new AccountNotExistException("Account with id:" + accountnr + " does not exist.", ErrorCode.Balances_ERROR, HttpStatus.NOT_FOUND));
 
         return Balances;
