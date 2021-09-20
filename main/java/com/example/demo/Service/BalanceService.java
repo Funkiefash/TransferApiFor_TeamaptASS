@@ -22,7 +22,7 @@ import com.example.demo.exceptions.OverDraftException;
 import com.example.demo.exceptions.SystemException;
 import com.example.demo.Entity.Balances;
 import com.example.demo.Entity.TransactionRequest;
-import com.example.demo.repositories.IBalanceRepository;
+import com.example.demo.repositories.BalancesRepository;
 
 @Service
 public class BalanceService {
@@ -39,7 +39,7 @@ public class BalanceService {
     private String retrieveAccountBalanceUrl;
 
     public Balances retrieveBalances(String accountnr) {
-        Balances Balances = ibalanceRepository.findByaccountnr(accountnr)
+        Balances Balances = balancseRepository.findByaccountnr(accountnr)
                 .orElseThrow(() -> new AccountNotExistException("Account with id:" + accountnr + " does not exist.", ErrorCode.Balances_ERROR, HttpStatus.NOT_FOUND));
 
         return Balances;
@@ -47,10 +47,10 @@ public class BalanceService {
 
     @Transactional
     public void transferBalances(TransactionRequest transfer) throws OverDraftException, AccountNotExistException, SystemException {
-        Balances BalancesFrom = IBalanceRepository.getBalancesForUpdate(transfer.getfromaccountnr())
+        Balances BalancesFrom = balancesRepository.getBalancesForUpdate(transfer.getfromaccountnr())
                 .orElseThrow(() -> new AccountNotExistException("Account with id:" + transfer.getfromaccountnr() + " does not exist.", ErrorCode.Balances_ERROR));
 
-        Balances BalancesTo = IBalanceRepository.getBalancesForUpdate(transfer.gettoaccountnr())
+        Balances BalancesTo = balancesRepository.getBalancesForUpdate(transfer.gettoaccountnr())
                 .orElseThrow(() -> new AccountNotExistException("Account with id:" + transfer.getfromaccountnr() + " does not exist.", ErrorCode.Balances_ERROR));
 
         if(BalancesFrom.getbalance().compareTo(transfer.getAmount()) < 0) {
