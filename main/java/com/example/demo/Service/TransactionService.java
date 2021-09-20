@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.Entity.Balances;
 import com.example.demo.Entity.Transaction;
 import com.example.demo.exceptions.EntityCreationException;
-import com.example.demo.repositories.IBalanceRepository;
+import com.example.demo.repositories.BalancesRepository;
 import com.example.demo.repositories.TransactionRepository;
 import com.example.demo.service.exceptions.TransactionServiceException;
 
@@ -27,7 +27,7 @@ public class TransactionService {
 
     @Autowired
     public void setIBalanceRepository(IBalanceRepository IBalanceRepository) {
-        this.IBalanceRepository = balanceRepository;
+        this.BalancesRepository = balancesRepository;
     }
 
     @Autowired
@@ -39,7 +39,7 @@ public class TransactionService {
     public synchronized Balances createNewAccount(String name, BigDecimal initialBalance) throws TransactionServiceException {
         try {
             Balances balances = new Balances(name, initialBalance);
-            return this.IBalanceRepository.save(balances);
+            return this.balancesRepository.save(balances);
         } catch (DataAccessException e) {
             throw new TransactionServiceException("DataAccess exception: " + e.getMessage(), e);
         } catch (EntityCreationException e) {
@@ -48,7 +48,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public synchronized Transaction transaction(Long fromaccountnr, Long toaccountnr, BigDecimal transferAmount)
+    public synchronized Transaction transaction(String fromaccountnr, String toaccountnr, BigDecimal transferAmount)
             throws TransactionServiceException {
         try {
             // transfer amount must be greater than zero
@@ -57,10 +57,10 @@ public class TransactionService {
             }
 
             // find from account
-            Balances fromBalances = Optional.of(this.IBalanceRepository.findOne(toaccountnr)).get();
+            Balances fromBalances = Optional.of(this.balancesRepository.findOne(toaccountnr)).get();
 
             // find to account
-            Balances toBalances = Optional.of(this.IBalanceRepository.findOne(fromaccountnr)).get();
+            Balances toBalances = Optional.of(this.balancesRepository.findOne(fromaccountnr)).get();
 
             if (!fromAccount.subtract(transferAmount)) {
                 throw new TransactionServiceException("Source account has insufficent balance for transfer.");
@@ -68,8 +68,8 @@ public class TransactionService {
 
             toAccount.add(transferAmount);
 
-            this.IBalanceRepository.save(fromBalances);
-            this.IBalanceRepository.save(toBalances);
+            this.balancesRepository.save(fromBalances);
+            this.balancesRepository.save(toBalances);
 
             Transaction transaction = new Transaction(fromBalance.getId(), toaccountnr.getId(), transferAmount);
             return this.TransactionRepository.save(Transaction);
@@ -79,7 +79,7 @@ public class TransactionService {
     }
 
     public Iterable<Balances> findAllBalances() {
-        return this.IBalanceRepository.findAll();
+        return this.balancesRepository.findAll();
     }
 
     public Iterable<Transaction> findAllTransactions() {
