@@ -18,7 +18,7 @@ import com.example.demo.service.exceptions.TransactionServiceException;
 @Service
 public class TransactionService {
 
-    private IBalanceRepository BalanceRepository;
+    private BalancesRepository BalancesRepository;
     private TransactionRepository transactionRepository;
 
     public TransactionService() {
@@ -26,8 +26,8 @@ public class TransactionService {
     }
 
     @Autowired
-    public void setIBalanceRepository(IBalanceRepository IBalanceRepository) {
-        this.BalancesRepository = balancesRepository;
+    public void setbalancesRepository(balancesRepository BalancesRepository) {
+        this.balancesRepository = balancesRepository;
     }
 
     @Autowired
@@ -62,16 +62,16 @@ public class TransactionService {
             // find to account
             Balances toBalances = Optional.of(this.balancesRepository.findOne(fromaccountnr)).get();
 
-            if (!fromAccount.subtract(transferAmount)) {
+            if (!Balancesfrom.subtract(transferAmount)) {
                 throw new TransactionServiceException("Source account has insufficent balance for transfer.");
             }// if
 
             toAccount.add(transferAmount);
 
-            this.balancesRepository.save(fromBalances);
-            this.balancesRepository.save(toBalances);
+            this.balancesRepository.save(Balancesfrom);
+            this.balancesRepository.save(Balancesto);
 
-            Transaction transaction = new Transaction(fromBalance.getId(), toaccountnr.getId(), transferAmount);
+            Transaction transaction = new Transaction(Balancesfrom.getId(), toaccountnr.getId(), transferAmount);
             return this.TransactionRepository.save(Transaction);
         } catch (EntityCreationException | NullPointerException e) {
             throw new TransactionServiceException(e);
