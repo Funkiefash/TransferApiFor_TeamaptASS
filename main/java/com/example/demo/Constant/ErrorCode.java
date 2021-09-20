@@ -19,7 +19,7 @@ public class ErrorCode {
     /**
      * Error Code for any error related to account
      */
-    public static final String BALANCE_ERROR = "ERR_CLIENT_002";
+    public static final String Balances_ERROR = "ERR_CLIENT_002";
 
     public static final String Transaction_ERROR = "ERR_CLIENT_004";
 
