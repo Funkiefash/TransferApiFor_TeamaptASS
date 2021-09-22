@@ -32,7 +32,20 @@ mvn test
 ```
 java -jar demo-0.0.1-SNAPSHOT.jar
 ```
-
+### Dependencies
+```
+To install Ojdbc8.jar file to POM
+  i. Download from the oracle website ojdbc8.jar
+  ii.Add this to the Pom.xml file
+  <dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc</artifactId>
+			<version>8</version>
+			<scope>system</scope>
+			<systemPath>C:/Users/USER/Downloads/ojdbc8.jar</systemPath>
+		</dependency>
+    iii. System path is according to the location of file on your Pc.
+    ```
 ### SpringBoot Version
 ```
 2.6.0-SNAPSHOT
